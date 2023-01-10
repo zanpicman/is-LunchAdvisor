@@ -9,9 +9,12 @@ import android.content.Intent;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.collection.CircularArray;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -25,16 +28,18 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import com.squareup.picasso.Picasso;
 
 public class LunchPicker extends AppCompatActivity {
     private RequestQueue requestQueue;
-    private TextView dishes;
+    private ImageView dishes;
     private String url = "https://lunchadvisor1.azurewebsites.net/api/DishesApi";
     private String[] dishNames;
     private int[] dishID;
     private String[] dishURL;
     private String[] restaurantName;
     private int[] restaurantIDs;
+    private boolean[] ocene;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +47,17 @@ public class LunchPicker extends AppCompatActivity {
         setContentView(R.layout.activity_lunch_picker);
         setTitle("Lunch Picker");
         requestQueue = Volley.newRequestQueue(getApplicationContext());
-        dishes = (TextView) findViewById(R.id.osebe);
+        dishes = (ImageView) findViewById(R.id.imageView);
     }
 
     public void showDishes(View view) {
         if (view != null) {
+            Button button = (Button)view;
+            button.setVisibility(Button.INVISIBLE);
+            View like = findViewById(R.id.like);
+            like.setVisibility(View.VISIBLE);
+            View dislike = findViewById(R.id.dislike);
+            dislike.setVisibility(View.VISIBLE);
             JsonArrayRequest request = new JsonArrayRequest(url, jsonArrayListener, errorListener);
             requestQueue.add(request);
         }
@@ -61,6 +72,8 @@ public class LunchPicker extends AppCompatActivity {
             dishURL = new String[response.length()];
             restaurantName = new String[response.length()];
             restaurantIDs = new int[response.length()];
+            ocene = new boolean[6];
+
             for (int i = 0; i < response.length(); i++) {
 
                 try {
@@ -75,17 +88,18 @@ public class LunchPicker extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                dishes.setText("");
+
 
             }
-            for (String row: dishNames){
-                String currentText = dishes.getText().toString();
-                dishes.setText(currentText + "\n\n" + row);
-            }
+            setImage(dishURL[5]);
         }
 
 
     };
+    private void setImage(String url) {
+        ImageView imageView = findViewById(R.id.imageView);
+        Picasso.get().load(url).into(imageView);
+    }
 
     private Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
