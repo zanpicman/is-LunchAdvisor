@@ -29,6 +29,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import com.squareup.picasso.Picasso;
 
 public class LunchPicker extends AppCompatActivity {
@@ -40,8 +41,9 @@ public class LunchPicker extends AppCompatActivity {
     private String[] dishURL;
     private String[] restaurantName;
     private int[] restaurantIDs;
-    private boolean[] ocene;
-
+    private boolean[] ocene = new boolean[6];
+    private int workingOn;
+    private int stOcen;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +55,7 @@ public class LunchPicker extends AppCompatActivity {
 
     public void showDishes(View view) {
         if (view != null) {
-            Button button = (Button)view;
+            Button button = (Button) view;
             button.setVisibility(Button.INVISIBLE);
             View like = findViewById(R.id.like);
             like.setVisibility(View.VISIBLE);
@@ -90,18 +92,44 @@ public class LunchPicker extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-
             }
-            setImageAndName(5);
+
+            workingOn = getRandomNumber(0, dishNames.length);
+            setImageAndName(workingOn);
+            stOcen++;
         }
 
 
     };
+
     private void setImageAndName(int position) {
         ImageView imageView = findViewById(R.id.imageView);
         Picasso.get().load(dishURL[position]).into(imageView);
         TextView textView = findViewById(R.id.textView);
         textView.setText(dishNames[position]);
+    }
+    public void setOcenaTrue(View view){
+        if (stOcen <= 6) {
+            ocene[workingOn]=true;
+            workingOn = getRandomNumber(0,dishNames.length);
+            setImageAndName(workingOn);
+            stOcen++;
+        }
+        else prikazRestavracije();
+
+    }
+    public void setOcenaFalse(View view){
+        if(stOcen <= 6) {
+            ocene[workingOn] = false;
+            workingOn = getRandomNumber(0, dishNames.length);
+            setImageAndName(workingOn);
+            stOcen++;
+        }
+        else prikazRestavracije();
+    }
+
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
     }
 
     private Response.ErrorListener errorListener = new Response.ErrorListener() {
@@ -111,4 +139,8 @@ public class LunchPicker extends AppCompatActivity {
         }
     };
 
+    private void prikazRestavracije(){
+        System.out.println("koknne");
+
+    }
 }
