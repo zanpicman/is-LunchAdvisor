@@ -13,7 +13,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="4dp"
-        android:text="Seznam studentov."
+        android:text="list of dishes"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button"

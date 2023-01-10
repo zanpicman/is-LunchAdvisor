@@ -58,7 +58,14 @@ public class LunchPicker extends AppCompatActivity {
                     int restaurantID = dish.getInt("restaurantID");
                     String name = dish.getString("name");
                     String imageURL = dish.getString("imageURL");
-                    data.add(id + " " + name);
+
+
+                    JSONObject restaurant = dish.getJSONObject("restaurant");
+
+                    String resName = restaurant.getString("name");
+
+                    data.add(name +" restaurant:"+resName);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
