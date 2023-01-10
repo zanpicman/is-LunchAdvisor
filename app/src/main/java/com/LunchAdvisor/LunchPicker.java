@@ -24,11 +24,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class LunchPicker extends AppCompatActivity {
     private RequestQueue requestQueue;
     private TextView dishes;
     private String url = "https://lunchadvisor1.azurewebsites.net/api/DishesApi";
+    private String[] dishNames;
+    private int[] dishID;
+    private String[] dishURL;
+    private String[] restaurantName;
+    private int[] restaurantIDs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,35 +56,35 @@ public class LunchPicker extends AppCompatActivity {
 
         @Override
         public void onResponse(JSONArray response) {
-            ArrayList<String> data = new ArrayList<>();
+            dishNames = new String[response.length()];
+            dishID = new int[response.length()];
+            dishURL = new String[response.length()];
+            restaurantName = new String[response.length()];
+            restaurantIDs = new int[response.length()];
             for (int i = 0; i < response.length(); i++) {
+
                 try {
                     JSONObject dish = response.getJSONObject(i);
-                    int id = dish.getInt("id");
-                    int restaurantID = dish.getInt("restaurantID");
-                    String name = dish.getString("name");
-                    String imageURL = dish.getString("imageURL");
-
-
+                    dishID[i] = dish.getInt("id");
+                    restaurantIDs[i] = dish.getInt("restaurantID");
+                    dishNames[i] = dish.getString("name");
+                    dishURL[i] = dish.getString("imageURL");
                     JSONObject restaurant = dish.getJSONObject("restaurant");
-
-                    String resName = restaurant.getString("name");
-
-                    data.add(name +" restaurant:"+resName);
+                    restaurantName[i] = restaurant.getString("name");
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 dishes.setText("");
 
-            for (String row : data) {
+            }
+            for (String row: dishNames){
                 String currentText = dishes.getText().toString();
                 dishes.setText(currentText + "\n\n" + row);
             }
-
-            }
-
         }
+
+
     };
 
     private Response.ErrorListener errorListener = new Response.ErrorListener() {
