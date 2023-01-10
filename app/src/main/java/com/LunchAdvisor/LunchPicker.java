@@ -25,6 +25,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,14 +92,16 @@ public class LunchPicker extends AppCompatActivity {
 
 
             }
-            setImage(dishURL[5]);
+            setImageAndName(5);
         }
 
 
     };
-    private void setImage(String url) {
+    private void setImageAndName(int position) {
         ImageView imageView = findViewById(R.id.imageView);
-        Picasso.get().load(url).into(imageView);
+        Picasso.get().load(dishURL[position]).into(imageView);
+        TextView textView = findViewById(R.id.textView);
+        textView.setText(dishNames[position]);
     }
 
     private Response.ErrorListener errorListener = new Response.ErrorListener() {
