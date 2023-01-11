@@ -42,6 +42,7 @@ public class LunchPicker extends AppCompatActivity {
     private String[] restaurantName;
     private int[] restaurantIDs;
     private boolean[] ocene = new boolean[6];
+    private int[] oceneIndex = new  int[6];
     private int workingOn;
     private int stOcen;
     @Override
@@ -109,8 +110,9 @@ public class LunchPicker extends AppCompatActivity {
         textView.setText(dishNames[position]);
     }
     public void setOcenaTrue(View view){
-        if (stOcen <= 6) {
-            ocene[workingOn]=true;
+        if (stOcen < 6) {
+            ocene[stOcen]=true;
+            oceneIndex[stOcen] = workingOn;
             workingOn = getRandomNumber(0,dishNames.length);
             setImageAndName(workingOn);
             stOcen++;
@@ -119,8 +121,9 @@ public class LunchPicker extends AppCompatActivity {
 
     }
     public void setOcenaFalse(View view){
-        if(stOcen <= 6) {
-            ocene[workingOn] = false;
+        if(stOcen < 6) {
+            ocene[stOcen] = false;
+            oceneIndex[stOcen] = workingOn;
             workingOn = getRandomNumber(0, dishNames.length);
             setImageAndName(workingOn);
             stOcen++;
@@ -140,7 +143,14 @@ public class LunchPicker extends AppCompatActivity {
     };
 
     private void prikazRestavracije(){
-        System.out.println("koknne");
+            ImageView imageView = findViewById(R.id.imageView);
+            int rnd = getRandomNumber(0,stOcen);
+            while(!ocene[rnd]) rnd = getRandomNumber(0,stOcen);
+
+            Picasso.get().load(dishURL[oceneIndex[rnd]]).into(imageView);
+            TextView textView = findViewById(R.id.textView);
+            textView.setText(dishNames[oceneIndex[rnd]]);
+
 
     }
 }
