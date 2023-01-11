@@ -42,6 +42,7 @@ public class LunchPicker extends AppCompatActivity {
     private String[] restaurantName;
     private int[] restaurantIDs;
     private String[] restaurantURL;
+    private String[] location;
     private boolean[] ocene = new boolean[6];
     private int[] oceneIndex = new int[6];
     private int workingOn;
@@ -80,6 +81,7 @@ public class LunchPicker extends AppCompatActivity {
             restaurantIDs = new int[response.length()];
             restaurantURL = new String[response.length()];
             ocene = new boolean[6];
+            location = new String[response.length()];
             for (int i = 0; i < response.length(); i++) {
                 try {
                     JSONObject dish = response.getJSONObject(i);
@@ -90,6 +92,7 @@ public class LunchPicker extends AppCompatActivity {
                     JSONObject restaurant = dish.getJSONObject("restaurant");
                     restaurantName[i] = restaurant.getString("name");
                     restaurantURL[i] = restaurant.getString("imageURL");
+                    location[i] = restaurant.getString("location");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -157,6 +160,8 @@ public class LunchPicker extends AppCompatActivity {
         res.setText(restaurantName[oceneIndex[rnd]]);
         ImageView img = findViewById(R.id.imageView2);
         Picasso.get().load(restaurantURL[oceneIndex[rnd]]).into(img);
+        TextView loc = findViewById(R.id.location);
+        loc.setText("Lokacija: " + location[oceneIndex[rnd]]);
 
     }
 }
