@@ -41,10 +41,12 @@ public class LunchPicker extends AppCompatActivity {
     private String[] dishURL;
     private String[] restaurantName;
     private int[] restaurantIDs;
+    private String[] restaurantURL;
     private boolean[] ocene = new boolean[6];
-    private int[] oceneIndex = new  int[6];
+    private int[] oceneIndex = new int[6];
     private int workingOn;
     private int stOcen;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,10 +78,9 @@ public class LunchPicker extends AppCompatActivity {
             dishURL = new String[response.length()];
             restaurantName = new String[response.length()];
             restaurantIDs = new int[response.length()];
+            restaurantURL = new String[response.length()];
             ocene = new boolean[6];
-
             for (int i = 0; i < response.length(); i++) {
-
                 try {
                     JSONObject dish = response.getJSONObject(i);
                     dishID[i] = dish.getInt("id");
@@ -88,19 +89,15 @@ public class LunchPicker extends AppCompatActivity {
                     dishURL[i] = dish.getString("imageURL");
                     JSONObject restaurant = dish.getJSONObject("restaurant");
                     restaurantName[i] = restaurant.getString("name");
-
+                    restaurantURL[i] = restaurant.getString("imageURL");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
-
             workingOn = getRandomNumber(0, dishNames.length);
             setImageAndName(workingOn);
             stOcen++;
         }
-
-
     };
 
     private void setImageAndName(int position) {
@@ -109,26 +106,26 @@ public class LunchPicker extends AppCompatActivity {
         TextView textView = findViewById(R.id.textView);
         textView.setText(dishNames[position]);
     }
-    public void setOcenaTrue(View view){
+
+    public void setOcenaTrue(View view) {
         if (stOcen < 6) {
-            ocene[stOcen]=true;
+            ocene[stOcen] = true;
             oceneIndex[stOcen] = workingOn;
-            workingOn = getRandomNumber(0,dishNames.length);
+            workingOn = getRandomNumber(0, dishNames.length);
             setImageAndName(workingOn);
             stOcen++;
-        }
-        else prikazRestavracije();
+        } else prikazRestavracije();
 
     }
-    public void setOcenaFalse(View view){
-        if(stOcen < 6) {
+
+    public void setOcenaFalse(View view) {
+        if (stOcen < 6) {
             ocene[stOcen] = false;
             oceneIndex[stOcen] = workingOn;
             workingOn = getRandomNumber(0, dishNames.length);
             setImageAndName(workingOn);
             stOcen++;
-        }
-        else prikazRestavracije();
+        } else prikazRestavracije();
     }
 
     public int getRandomNumber(int min, int max) {
@@ -142,15 +139,24 @@ public class LunchPicker extends AppCompatActivity {
         }
     };
 
-    private void prikazRestavracije(){
-            ImageView imageView = findViewById(R.id.imageView);
-            int rnd = getRandomNumber(0,stOcen);
-            while(!ocene[rnd]) rnd = getRandomNumber(0,stOcen);
+    private void prikazRestavracije() {
+        ImageView imageView = findViewById(R.id.imageView);
+        int rnd = getRandomNumber(0, stOcen);
+        while (!ocene[rnd]) rnd = getRandomNumber(0, stOcen);
 
-            Picasso.get().load(dishURL[oceneIndex[rnd]]).into(imageView);
-            TextView textView = findViewById(R.id.textView);
-            textView.setText(dishNames[oceneIndex[rnd]]);
-
+        Picasso.get().load(dishURL[oceneIndex[rnd]]).into(imageView);
+        TextView textView = findViewById(R.id.textView);
+        textView.setText(dishNames[oceneIndex[rnd]]);
+        Button b1 = findViewById(R.id.like);
+        Button b2 = findViewById(R.id.dislike);
+        b1.setVisibility(View.INVISIBLE);
+        b2.setVisibility(View.INVISIBLE);
+        TextView poskusi = findViewById(R.id.poskusite);
+        poskusi.setText("Poskusite:");
+        TextView res = findViewById(R.id.restavracijaText);
+        res.setText(restaurantName[oceneIndex[rnd]]);
+        ImageView img = findViewById(R.id.imageView2);
+        Picasso.get().load(restaurantURL[oceneIndex[rnd]]).into(img);
 
     }
 }
