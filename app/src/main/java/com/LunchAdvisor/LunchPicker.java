@@ -29,6 +29,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import com.squareup.picasso.Picasso;
 
 public class LunchPicker extends AppCompatActivity {
@@ -40,7 +41,12 @@ public class LunchPicker extends AppCompatActivity {
     private String[] dishURL;
     private String[] restaurantName;
     private int[] restaurantIDs;
-    private boolean[] ocene;
+    private String[] restaurantURL;
+    private String[] location;
+    private boolean[] ocene = new boolean[6];
+    private int[] oceneIndex = new int[6];
+    private int workingOn;
+    private int stOcen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +59,7 @@ public class LunchPicker extends AppCompatActivity {
 
     public void showDishes(View view) {
         if (view != null) {
-            Button button = (Button)view;
+            Button button = (Button) view;
             button.setVisibility(Button.INVISIBLE);
             View like = findViewById(R.id.like);
             like.setVisibility(View.VISIBLE);
@@ -73,10 +79,10 @@ public class LunchPicker extends AppCompatActivity {
             dishURL = new String[response.length()];
             restaurantName = new String[response.length()];
             restaurantIDs = new int[response.length()];
+            restaurantURL = new String[response.length()];
             ocene = new boolean[6];
-
+            location = new String[response.length()];
             for (int i = 0; i < response.length(); i++) {
-
                 try {
                     JSONObject dish = response.getJSONObject(i);
                     dishID[i] = dish.getInt("id");
@@ -85,23 +91,48 @@ public class LunchPicker extends AppCompatActivity {
                     dishURL[i] = dish.getString("imageURL");
                     JSONObject restaurant = dish.getJSONObject("restaurant");
                     restaurantName[i] = restaurant.getString("name");
-
+                    restaurantURL[i] = restaurant.getString("imageURL");
+                    location[i] = restaurant.getString("location");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
             }
-            setImageAndName(5);
+            workingOn = getRandomNumber(0, dishNames.length);
+            setImageAndName(workingOn);
+            stOcen++;
         }
-
-
     };
+
     private void setImageAndName(int position) {
         ImageView imageView = findViewById(R.id.imageView);
         Picasso.get().load(dishURL[position]).into(imageView);
         TextView textView = findViewById(R.id.textView);
         textView.setText(dishNames[position]);
+    }
+
+    public void setOcenaTrue(View view) {
+        if (stOcen < 6) {
+            ocene[stOcen] = true;
+            oceneIndex[stOcen] = workingOn;
+            workingOn = getRandomNumber(0, dishNames.length);
+            setImageAndName(workingOn);
+            stOcen++;
+        } else prikazRestavracije();
+
+    }
+
+    public void setOcenaFalse(View view) {
+        if (stOcen < 6) {
+            ocene[stOcen] = false;
+            oceneIndex[stOcen] = workingOn;
+            workingOn = getRandomNumber(0, dishNames.length);
+            setImageAndName(workingOn);
+            stOcen++;
+        } else prikazRestavracije();
+    }
+
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
     }
 
     private Response.ErrorListener errorListener = new Response.ErrorListener() {
@@ -111,4 +142,26 @@ public class LunchPicker extends AppCompatActivity {
         }
     };
 
+    private void prikazRestavracije() {
+        ImageView imageView = findViewById(R.id.imageView);
+        int rnd = getRandomNumber(0, stOcen);
+        while (!ocene[rnd]) rnd = getRandomNumber(0, stOcen);
+
+        Picasso.get().load(dishURL[oceneIndex[rnd]]).into(imageView);
+        TextView textView = findViewById(R.id.textView);
+        textView.setText(dishNames[oceneIndex[rnd]]);
+        Button b1 = findViewById(R.id.like);
+        Button b2 = findViewById(R.id.dislike);
+        b1.setVisibility(View.INVISIBLE);
+        b2.setVisibility(View.INVISIBLE);
+        TextView poskusi = findViewById(R.id.poskusite);
+        poskusi.setText("Poskusite:");
+        TextView res = findViewById(R.id.restavracijaText);
+        res.setText(restaurantName[oceneIndex[rnd]]);
+        ImageView img = findViewById(R.id.imageView2);
+        Picasso.get().load(restaurantURL[oceneIndex[rnd]]).into(img);
+        TextView loc = findViewById(R.id.location);
+        loc.setText("Lokacija: " + location[oceneIndex[rnd]]);
+
+    }
 }
